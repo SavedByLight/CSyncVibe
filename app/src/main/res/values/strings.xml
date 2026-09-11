@@ -6,12 +6,17 @@
     <string name="repo_name_hint">Repository Name</string>
     <string name="file_path_hint">File path in repo (e.g. contacts/contacts.json)</string>
     <string name="save_settings">Save Settings</string>
-    <string name="sync_now">Sync Contacts Now</string>
-    <string name="last_sync">Last sync: %1$s</string>
+    <string name="download_import">Download &amp; Import from GitHub</string>
+    <string name="upload_overwrite">Upload / Overwrite on GitHub</string>
+    <string name="last_sync">Last action: %1$s</string>
     <string name="status_idle">Ready</string>
-    <string name="status_syncing">Syncing contacts…</string>
-    <string name="status_success">Sync successful!</string>
-    <string name="status_error">Sync failed: %1$s</string>
-    <string name="permission_required">Contacts permission is required to sync</string>
+    <string name="status_downloading">Downloading contacts…</string>
+    <string name="status_uploading">Uploading contacts…</string>
+    <string name="status_success_download">Imported %1$d new contacts</string>
+    <string name="status_success_upload">Uploaded %1$d contacts</string>
+    <string name="status_error">Failed: %1$s</string>
+    <string name="permission_required">Contacts permission is required</string>
     <string name="settings_saved">Settings saved securely</string>
+    <string name="confirm_overwrite_title">Overwrite on GitHub?</string>
+    <string name="confirm_overwrite_message">This will replace the contacts file on GitHub with the contacts currently on this device. Continue?</string>
 </resources>

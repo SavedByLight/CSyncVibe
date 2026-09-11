@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sync your Android contacts to a GitHub repository"
+            android:text="Sync contacts between your devices via GitHub"
             android:textSize="14sp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp" />
@@ -91,15 +91,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/save_settings"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="20dp"
             style="@style/Widget.Material3.Button.OutlinedButton" />
 
+        <!-- Primary action: Download & Import -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSync"
+            android:id="@+id/btnDownload"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sync_now"
-            android:layout_marginBottom="24dp" />
+            android:text="@string/download_import"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Secondary / destructive: Upload & Overwrite -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUpload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/upload_overwrite"
+            android:layout_marginBottom="24dp"
+            style="@style/Widget.Material3.Button.TonalButton" />
 
         <TextView
             android:id="@+id/txtStatus"
