@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CSyncVibe</string>
+    <string name="github_token_hint">GitHub Personal Access Token (repo scope)</string>
+    <string name="repo_owner_hint">GitHub Username / Owner</string>
+    <string name="repo_name_hint">Repository Name</string>
+    <string name="file_path_hint">File path in repo (e.g. contacts/contacts.json)</string>
+    <string name="save_settings">Save Settings</string>
+    <string name="sync_now">Sync Contacts Now</string>
+    <string name="last_sync">Last sync: %1$s</string>
+    <string name="status_idle">Ready</string>
+    <string name="status_syncing">Syncing contacts…</string>
+    <string name="status_success">Sync successful!</string>
+    <string name="status_error">Sync failed: %1$s</string>
+    <string name="permission_required">Contacts permission is required to sync</string>
+    <string name="settings_saved">Settings saved securely</string>
+</resources>
