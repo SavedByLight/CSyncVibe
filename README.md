@@ -6,54 +6,88 @@
 
 - 📱 Read all contacts (name, phone numbers, emails)
 - 🔒 Secure storage of GitHub Personal Access Token using EncryptedSharedPreferences
-- ☁️ Push contacts as pretty-printed JSON to any file path in your repo
-- 🔄 One-tap manual sync + automatic background sync every 12 hours
+- ⬇️ **Download & Import** contacts from GitHub (safe for a second device)
+- ⬆️ **Upload / Overwrite** only when you explicitly confirm
 - 🛠️ Clean Material 3 UI
-- ✅ GitHub Actions CI that builds the debug APK on every push
+- ✅ GitHub Actions CI that builds debug + signed release APKs and publishes GitHub Releases on tags
 
 ## How it works
 
-1. You provide a GitHub **Personal Access Token** (classic) with the `repo` scope.
-2. You specify the repository owner, name, and the target file path (default: `contacts/contacts.json`).
-3. The app queries `ContactsContract`, builds a clean JSON payload, and uses the GitHub Contents API to create or update the file.
+1. Provide a GitHub **Personal Access Token** (classic) with the `repo` scope.
+2. Specify the repository owner, name, and target file path (default: `contacts/contacts.json`).
+3. **Download & Import** pulls the JSON from GitHub and inserts only new contacts.
+4. **Upload / Overwrite** (with confirmation) replaces the file on GitHub with contacts from this device.
 
-## Setup
+## Setup (app usage)
 
-### 1. Create a GitHub Personal Access Token
+1. Create a classic GitHub PAT with the **`repo`** scope.
+2. Open the app → paste token, owner, repo → Save Settings.
+3. Grant Contacts permissions.
+4. On the device that has the contacts → **Upload / Overwrite**.
+5. On other devices → **Download & Import**.
 
-1. Go to GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
-2. Generate a new token with the **`repo`** scope
-3. Copy the token (you will only see it once)
+## Signing & GitHub Releases (CI)
 
-### 2. Create / choose a repository
-
-You can use a private repository. The app will create the target file if it does not exist.
-
-### 3. Build & install the app
+### 1. Create a release keystore (one-time, on your machine)
 
 ```bash
-git clone <your-fork>
-cd CSyncVibe
-./gradlew assembleDebug
+keytool -genkey -v \
+  -keystore release.keystore \
+  -alias csyncvibe \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000
 ```
 
-Install the APK from `app/build/outputs/apk/debug/`.
+Keep the keystore and passwords safe. If you lose them you cannot update the app with the same signing key.
 
-Or open the project in Android Studio and run it.
+### 2. Encode the keystore for GitHub Secrets
 
-### 4. Configure inside the app
+```bash
+base64 -w 0 release.keystore > keystore.base64.txt
+# macOS: base64 -i release.keystore -o keystore.base64.txt
+```
 
-1. Paste your GitHub token
-2. Enter repository owner (your username or organization)
-3. Enter repository name
-4. (Optional) change the file path
-5. Tap **Save Settings**
-6. Grant Contacts permission when prompted
-7. Tap **Sync Contacts Now**
+### 3. Add repository secrets
+
+Go to your repo → **Settings → Secrets and variables → Actions** and create:
+
+| Secret name         | Value                                      |
+|---------------------|--------------------------------------------|
+| `KEYSTORE_BASE64`   | Contents of `keystore.base64.txt`          |
+| `KEYSTORE_PASSWORD` | Keystore password                          |
+| `KEY_ALIAS`         | `csyncvibe` (or the alias you chose)       |
+| `KEY_PASSWORD`      | Key password                               |
+
+### 4. Trigger a signed release
+
+Push a version tag:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The workflow will:
+
+1. Build the debug APK  
+2. Decode the keystore from secrets  
+3. Build a **signed** release APK  
+4. Create a **GitHub Release** for the tag and attach both APKs  
+
+You can also run the workflow manually from the **Actions** tab (`workflow_dispatch`).
+
+### Local signed builds (optional)
+
+```bash
+cp keystore.properties.example keystore.properties
+# edit keystore.properties with your paths/passwords
+./gradlew assembleRelease
+```
+
+`keystore.properties` and `*.keystore` are gitignored.
 
 ## Output format
-
-The JSON written to your repo looks like:
 
 ```json
 {
@@ -72,19 +106,15 @@ The JSON written to your repo looks like:
 
 ## Permissions
 
-- `READ_CONTACTS` – required to read contact data
-- `INTERNET` – required to talk to GitHub API
-- `POST_NOTIFICATIONS` – for future notification support
+- `READ_CONTACTS` – read contacts for upload  
+- `WRITE_CONTACTS` – import contacts from GitHub  
+- `INTERNET` – GitHub API  
 
 ## Security notes
 
-- The GitHub token is stored using AndroidX Security Crypto (AES-256 encrypted SharedPreferences).
-- The token is never logged or written to unencrypted storage.
-- Consider using a fine-scoped token and a private repository.
-
-## CI
-
-Every push / PR to `main` or `master` triggers `.github/workflows/build.yml`, which builds the debug APK and uploads it as an artifact.
+- The GitHub token is stored with AndroidX Security Crypto (AES-256).
+- Never commit `release.keystore`, `keystore.properties`, or passwords.
+- Prefer a private repo for the contacts JSON.
 
 ## License
 
