@@ -74,17 +74,48 @@ jobs:
           path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
 
-      # ---------- Create GitHub Release on tag push (v*) ----------
-      - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v') && env.KEYSTORE_BASE64 != ''
+      # ---------- Collect APKs for the release ----------
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+          cp app/build/outputs/apk/debug/app-debug.apk release-assets/CSyncVibe-debug.apk
+          if [ -f app/build/outputs/apk/release/app-release.apk ]; then
+            cp app/build/outputs/apk/release/app-release.apk release-assets/CSyncVibe-release.apk
+          fi
+          ls -la release-assets/
+
+      # ---------- Versioned release on tag (v*) ----------
+      - name: Create versioned GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           name: CSyncVibe ${{ github.ref_name }}
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
           generate_release_notes: true
-          files: |
-            app/build/outputs/apk/release/app-release.apk
-            app/build/outputs/apk/debug/app-debug.apk
+          files: release-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ---------- Continuous release on every push to main / manual run ----------
+      - name: Create continuous GitHub Release
+        if: github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: continuous
+          name: Continuous build #${{ github.run_number }}
+          draft: false
+          prerelease: true
+          body: |
+            Automatic build from `${{ github.sha }}` on `${{ github.ref_name }}`.
+
+            - Run: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - Commit: ${{ github.sha }}
+            - Branch: ${{ github.ref_name }}
+
+            ### Downloads
+            - **CSyncVibe-debug.apk** – always included
+            - **CSyncVibe-release.apk** – included when signing secrets are configured
+          files: release-assets/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
