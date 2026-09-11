@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.4"
+        android:scaleY="0.4"
+        android:translateX="32.4"
+        android:translateY="32.4">
+        <!-- Simple contact / sync style icon -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,28c-8.3,0 -15,6.7 -15,15s6.7,15 15,15 15,-6.7 15,-15 -6.7,-15 -15,-15zM54,52c-4.4,0 -8,-3.6 -8,-8s3.6,-8 8,-8 8,3.6 8,8 -3.6,8 -8,8z"/>
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,68c-13.3,0 -24,5.4 -24,12v6h48v-6c0,-6.6 -10.7,-12 -24,-12z"/>
+        <!-- small sync arrows -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M78,20l6,6 -6,6v-4h-8v-4h8v-4z"/>
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M30,40l-6,-6 6,-6v4h8v4h-8v4z"/>
+    </group>
+</vector>

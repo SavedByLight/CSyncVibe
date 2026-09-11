@@ -22,8 +22,16 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Setup Gradle Wrapper
+        run: |
+          if [ ! -f gradlew ]; then
+            echo "gradlew missing – downloading Gradle and generating wrapper"
+            curl -sL -o /tmp/gradle.zip https://services.gradle.org/distributions/gradle-8.5-bin.zip
+            unzip -q /tmp/gradle.zip -d /tmp
+            /tmp/gradle-8.5/bin/gradle wrapper --gradle-version 8.5
+          fi
+          chmod +x gradlew
+          ls -l gradlew
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
